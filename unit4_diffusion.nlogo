@@ -19,6 +19,10 @@ reset-ticks
 end
 
 to go
+
+;; stop the model if no one is left to adopt
+if not any? turtles with [not adopted?] [stop]
+
 ;; ask the turtles to adopt or not adopt randomly
   ask turtles with [not adopted?]
   [
@@ -151,6 +155,24 @@ social-influence
 1
 NIL
 HORIZONTAL
+
+PLOT
+208
+48
+408
+198
+adoption over time
+time
+adoptions
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot count turtles with [adopted?]"
 
 @#$#@#$#@
 ## WHAT IS IT?
