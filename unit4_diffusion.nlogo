@@ -14,6 +14,11 @@ crt num-agent [
                set shape "person"
                ]
 
+;; create the network of agents
+ask turtles [
+create-link-with one-of other turtles
+]
+
 
 reset-ticks
 end
@@ -173,6 +178,17 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot count turtles with [adopted?]"
+
+MONITOR
+13
+207
+77
+252
+# of links
+count links
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
