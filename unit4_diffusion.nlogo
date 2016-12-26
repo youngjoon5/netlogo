@@ -1,23 +1,55 @@
-turtle-own[] ;; add a property relateed to adoption
+turtles-own[adopted?] ;; add a property relateed to adoption
 
 to setup
 ca
 ;; creation of agents routine dependent on the slider
-;; adoption perperty needs to be initialized in the setup
-;; seperate the turtles spatially
+crt num-agent [
+               ;; adoption perperty needs to be initialized in the setup
+               set adopted? false
+               ;; seperate the turtles spatially
+               setxy random-xcor random-ycor
+
+               ;; consistent appearance
+               set color white
+               set shape "person"
+               ]
+
+
 reset-ticks
 end
 
 to go
 ;; ask the turtles to adopt or not adopt randomly
+  ask turtles with [not adopted?]
+  [
+   adopt
+  ]
 
+ tick
+end
+
+;; this precedure will determine whether or not adopt
+to adopt
+
+  ;; adopt based on broadcast influence
+  if random-float 1.0 < broadcast-influence [
+    set adopted? true
+    set color red
+  ]
+
+  ;; adopt based on socail influence
+  if not adopted? and random-float 1.0 < (social-influence * (count turtles with [adopted?]/ count turtles))
+  [
+   set adopted? true
+    set color pink
+  ]
 
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+762
 10
-647
+1199
 448
 -1
 -1
@@ -40,6 +72,85 @@ GRAPHICS-WINDOW
 1
 ticks
 30.0
+
+SLIDER
+15
+85
+187
+118
+num-agent
+num-agent
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+85
+49
+148
+82
+go
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+13
+49
+76
+82
+setup
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+14
+125
+186
+158
+broadcast-influence
+broadcast-influence
+0
+1
+0.01
+0.05
+1
+NIL
+HORIZONTAL
+
+SLIDER
+12
+166
+184
+199
+social-influence
+social-influence
+0
+1
+0.5
+0.05
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
