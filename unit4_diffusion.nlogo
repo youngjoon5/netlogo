@@ -46,8 +46,10 @@ to adopt
     set color red
   ]
 
-  ;; adopt based on socail influence
-  if not adopted? and random-float 1.0 < (social-influence * (count turtles with [adopted?]/ count turtles))
+  ;; adopt based on socail influence based on network
+  let neighbors-adopted link-neighbors with [adopted? ]
+  let total-neighbors link-neighbors
+  if not adopted? and random-float 1.0 < (social-influence * (count neighbors-adopted / count total-neighbors))
   [
    set adopted? true
     set color pink
