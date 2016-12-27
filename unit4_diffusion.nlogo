@@ -14,11 +14,20 @@ crt num-agent [
                set shape "person"
                ]
 
+;; create the network of agents
+ask turtles [
+create-link-with one-of other turtles
+]
+
 
 reset-ticks
 end
 
 to go
+
+;; stop the model if no one is left to adopt
+if not any? turtles with [not adopted?] [stop]
+
 ;; ask the turtles to adopt or not adopt randomly
   ask turtles with [not adopted?]
   [
@@ -37,8 +46,10 @@ to adopt
     set color red
   ]
 
-  ;; adopt based on socail influence
-  if not adopted? and random-float 1.0 < (social-influence * (count turtles with [adopted?]/ count turtles))
+  ;; adopt based on socail influence based on network
+  let neighbors-adopted link-neighbors with [adopted? ]
+  let total-neighbors link-neighbors
+  if not adopted? and random-float 1.0 < (social-influence * (count neighbors-adopted / count total-neighbors))
   [
    set adopted? true
     set color pink
@@ -151,6 +162,35 @@ social-influence
 1
 NIL
 HORIZONTAL
+
+PLOT
+208
+48
+408
+198
+adoption over time
+time
+adoptions
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot count turtles with [adopted?]"
+
+MONITOR
+13
+207
+77
+252
+# of links
+count links
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
