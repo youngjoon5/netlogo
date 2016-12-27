@@ -1,23 +1,68 @@
+extensions[nw]
+
 turtles-own[adopted?] ;; add a property relateed to adoption
+
+breed [influentials influential]
+breed [regulars regular]
 
 to setup
 ca
-;; creation of agents routine dependent on the slider
-crt num-agent [
-               ;; adoption perperty needs to be initialized in the setup
-               set adopted? false
-               ;; seperate the turtles spatially
-               setxy random-xcor random-ycor
+set-default-shape regulars "person" ;; when set breed, the shape becomes default (triangle). So using this command, the shape do not change
+set-default-shape influentials "star"
 
-               ;; consistent appearance
-               set color white
-               set shape "person"
+
+;; creation of agents routine dependent on the slider
+
+;; crt num-agent [                                    ; make it comments in order to using nw extension
+
+      ;; create the agents based on the slider in a random network
+        if network = "random"
+              [ nw:generate-random turtles links num-agent  density
+                [
+
+                  ;; adoption perperty needs to be initialized in the setup
+                  set adopted? false
+                   ;; seperate the turtles spatially
+                  setxy random-xcor random-ycor
+
+                  ;; consistent appearance
+                  set color white
+                ;  set shape "person"
                ]
+             ]
+
+      ;; create the agents based on the slider in a preferntial-attachment  network
+        if network = "preferential-attachment"
+             [ nw:generate-preferential-attachment turtles links num-agent    ; ignore density
+                 [
+
+                   ;; adoption perperty needs to be initialized in the setup
+                    set adopted? false
+                   ;; seperate the turtles spatially
+                   setxy random-xcor random-ycor
+
+                    ;; consistent appearance
+                    set color white
+                    set shape "person"
+                ]
+             ]
+
 
 ;; create the network of agents
-ask turtles [
-create-link-with one-of other turtles
-]
+;;ask turtles [
+;;create-link-with one-of other turtles
+;;]
+
+
+;;  For layout
+repeat 30 [layout-spring turtles links 0.2 5 1]  ;; for better shape
+
+ask n-of (frac-influential * num-agent) turtles
+        [
+            set breed influentials
+        ]
+
+ask turtles with [breed != influentials][set breed regulars]
 
 
 reset-ticks
@@ -49,10 +94,26 @@ to adopt
   ;; adopt based on socail influence based on network
   let neighbors-adopted link-neighbors with [adopted? ]
   let total-neighbors link-neighbors
-  if not adopted? and random-float 1.0 < (social-influence * (count neighbors-adopted / count total-neighbors))
+  if count total-neighbors > 0
   [
-   set adopted? true
-    set color pink
+
+    if not adopted? and random-float 1.0 < (social-influence * (count neighbors-adopted / count total-neighbors))
+    [
+      set adopted? true
+      set color pink
+    ]
+
+  ]
+end
+
+;; this procedure resets the diffusion of the information
+;; using button. this is like switch
+
+to reset-diffusion
+  ask turtles[
+  set adopted? false
+  set color white
+  clear-all-plots
   ]
 
 end
@@ -188,6 +249,85 @@ MONITOR
 252
 # of links
 count links
+17
+1
+11
+
+BUTTON
+11
+267
+123
+300
+NIL
+reset-diffusion
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+10
+307
+182
+340
+density
+density
+0
+1
+0.15
+0.05
+1
+NIL
+HORIZONTAL
+
+CHOOSER
+9
+352
+190
+397
+network
+network
+"random" "preferential-attachment"
+1
+
+SLIDER
+210
+211
+382
+244
+frac-influential
+frac-influential
+0
+1
+0.1
+0.05
+1
+NIL
+HORIZONTAL
+
+MONITOR
+209
+250
+282
+295
+influentials
+count influentials
+17
+1
+11
+
+MONITOR
+304
+250
+362
+295
+regulars
+count regulars
 17
 1
 11
